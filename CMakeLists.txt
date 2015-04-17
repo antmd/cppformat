@@ -2,6 +2,9 @@ message(STATUS "CMake version: ${CMAKE_VERSION}")
 
 cmake_minimum_required(VERSION 2.6)
 
+set(BUILD_TESTS ON CACHE BOOL "Whether to build tests")
+set(BUILD_DOCS ON CACHE BOOL "Whether to build documentation")
+
 # Set the default CMAKE_BUILD_TYPE to Release.
 # This should be done before the project command since the latter can set
 # CMAKE_BUILD_TYPE itself (it does so for nmake).
@@ -96,7 +99,9 @@ if (CPP11_FLAG AND FMT_EXTRA_TESTS)
   add_library(testformat STATIC ${FMT_SOURCE_FILES} ${src})
 endif ()
 
-add_subdirectory(doc)
+if (BUILD_DOCS)
+    add_subdirectory(doc)
+endif ()
 
 include_directories(. gmock)
 
@@ -162,8 +167,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_definitions(gmock PUBLIC GTEST_USE_OWN_TR1_TUPLE=1)
 endif ()
 
-enable_testing()
-add_subdirectory(test)
+if (BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
 set(CPACK_PACKAGE_VERSION_MAJOR 1)
 set(CPACK_PACKAGE_VERSION_MINOR 2)
